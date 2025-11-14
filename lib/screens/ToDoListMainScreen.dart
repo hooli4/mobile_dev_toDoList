@@ -502,77 +502,127 @@ class _ToDoListMainScreenState extends State<ToDoListMainScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: Container(
-            width: 342,
-            height: 537,
-            decoration: BoxDecoration(
-              color: const Color(0xFF091E08),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: const Color(0xFF2C911F),
-                width: 3,
-              ),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  child: const Text(
-                    'Добавить задачу',
-                    style: TextStyle(
-                      color: Color(0xFF59FF43),
-                      fontSize: 24,
-                    ),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              child: Container(
+                width: 342,
+                height: 537,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF091E08),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: const Color(0xFF2C911F),
+                    width: 3,
                   ),
                 ),
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      child: const Text(
+                        'Добавить задачу',
+                        style: TextStyle(
+                          color: Color(0xFF59FF43),
+                          fontSize: 24,
+                        ),
+                      ),
+                    ),
 
-                _buildInputField(
-                  label: 'Название задачи',
-                  onChanged: (value) => newTitle = value,
-                ),
+                    _buildInputField(
+                      label: 'Название задачи',
+                      onChanged: (value) => newTitle = value,
+                    ),
 
-                _buildDateField(
-                  label: 'Дата выполнения (ДД.ММ.ГГГГ)',
-                  initialDate: selectedDate,
-                  onDateSelected: (date) => selectedDate = date,
-                ),
-
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildButton(
-                            text: 'Отмена',
-                            backgroundColor: const Color(0xFF073C00),
-                            textColor: const Color(0xFF59FF43),
-                            onPressed: () => Navigator.of(context).pop(),
+                          Text(
+                            'Дата выполнения (ДД.ММ.ГГГГ)',
+                            style: const TextStyle(
+                              color: Color(0xFF59FF43),
+                              fontSize: 24,
+                            ),
                           ),
-                          _buildButton(
-                            text: 'Добавить',
-                            backgroundColor: const Color(0xFF59FF43),
-                            textColor: const Color(0xFF073C00),
-                            onPressed: () {
-                              if (newTitle.isNotEmpty) {
-                                _addTask(newTitle, selectedDate);
-                                Navigator.of(context).pop();
+                          const SizedBox(height: 8),
+                          GestureDetector(
+                            onTap: () async {
+                              final DateTime? picked = await showDatePicker(
+                                context: context,
+                                initialDate: selectedDate,
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2100),
+                              );
+                              if (picked != null) {
+                                setState(() {
+                                  selectedDate = picked;
+                                });
                               }
                             },
+                            child: Container(
+                              width: double.infinity,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF073C00),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  child: Text(
+                                    _formatDate(selectedDate),
+                                    style: const TextStyle(
+                                      color: Color(0xFF59FF43),
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                      // Добавьте отступ снизу
-                      SizedBox(height: 20), // или любой другой размер
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
+                    ),
+
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _buildButton(
+                                text: 'Отмена',
+                                backgroundColor: const Color(0xFF073C00),
+                                textColor: const Color(0xFF59FF43),
+                                onPressed: () => Navigator.of(context).pop(),
+                              ),
+                              _buildButton(
+                                text: 'Добавить',
+                                backgroundColor: const Color(0xFF59FF43),
+                                textColor: const Color(0xFF073C00),
+                                onPressed: () {
+                                  if (newTitle.isNotEmpty) {
+                                    _addTask(newTitle, selectedDate);
+                                    Navigator.of(context).pop();
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 20),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );
